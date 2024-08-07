@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/dwikalam/calcgorpc/internal/app/config"
@@ -32,14 +33,13 @@ func app(ctx context.Context) error {
 	)
 
 	var (
+		wg     sync.WaitGroup
 		cancel context.CancelFunc
 
 		cfg config.Config
 
 		conn *grpc.ClientConn
 		cc   pb.CalculatorClient
-
-		resp *pb.CalculationResponse
 
 		err error
 	)
@@ -62,40 +62,127 @@ func app(ctx context.Context) error {
 
 	cc = pb.NewCalculatorClient(conn)
 
-	resp, err = cc.Add(ctx, &pb.CalculationRequest{A: 5, B: 10})
-	if err != nil {
-		log.Printf("failed doing Add RPC: %v\n", err)
-	} else {
+	wg.Add(1)
+	go func() {
+		var (
+			resp *pb.CalculationResponse
+
+			err error
+		)
+
+		defer wg.Done()
+
+		resp, err = cc.Add(ctx, &pb.CalculationRequest{A: 5, B: 10})
+		if err != nil {
+			log.Printf("failed doing Add RPC: %v\n", err)
+
+			return
+		}
+
 		fmt.Printf("Add RPC result: %.2f\n", resp.GetResult())
-	}
+	}()
 
-	resp, err = cc.Substract(ctx, &pb.CalculationRequest{A: 5, B: 10})
-	if err != nil {
-		log.Printf("failed doing Substract RPC: %v\n", err)
-	} else {
+	wg.Add(1)
+	go func() {
+		var (
+			resp *pb.CalculationResponse
+
+			err error
+		)
+
+		defer wg.Done()
+
+		resp, err = cc.Substract(ctx, &pb.CalculationRequest{A: 5, B: 10})
+		if err != nil {
+			log.Printf("failed doing Substract RPC: %v\n", err)
+
+			return
+		}
+
 		fmt.Printf("Substract RPC result: %.2f\n", resp.GetResult())
-	}
+	}()
 
-	resp, err = cc.Multiply(ctx, &pb.CalculationRequest{A: 5, B: 10})
-	if err != nil {
-		log.Printf("failed doing Multiply RPC: %v\n", err)
-	} else {
+	wg.Add(1)
+	go func() {
+		var (
+			resp *pb.CalculationResponse
+
+			err error
+		)
+
+		defer wg.Done()
+
+		resp, err = cc.Multiply(ctx, &pb.CalculationRequest{A: 5, B: 10})
+		if err != nil {
+			log.Printf("failed doing Multiply RPC: %v\n", err)
+
+			return
+		}
+
 		fmt.Printf("Multiply RPC result: %.2f\n", resp.GetResult())
-	}
+	}()
 
-	resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 0})
-	if err != nil {
-		log.Printf("failed doing Divide RPC: %v\n", err)
-	} else {
-		fmt.Printf("Divide RPC result: %.2f\n", resp.GetResult())
-	}
+	wg.Add(1)
+	go func() {
+		var (
+			resp *pb.CalculationResponse
 
-	resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 10})
-	if err != nil {
-		log.Printf("failed doing Divide RPC: %v\n", err)
-	} else {
+			err error
+		)
+
+		defer wg.Done()
+
+		resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 0})
+		if err != nil {
+			log.Printf("failed doing Divide RPC: %v\n", err)
+
+			return
+		}
+
 		fmt.Printf("Divide RPC result: %.2f\n", resp.GetResult())
-	}
+	}()
+
+	wg.Add(1)
+	go func() {
+		var (
+			resp *pb.CalculationResponse
+
+			err error
+		)
+
+		defer wg.Done()
+
+		resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 10})
+		if err != nil {
+			log.Printf("failed doing Divide RPC: %v\n", err)
+
+			return
+		}
+
+		fmt.Printf("Divide RPC result: %.2f\n", resp.GetResult())
+	}()
+
+	wg.Add(1)
+	go func() {
+		var (
+			resp *pb.CalculationResponse
+
+			err error
+		)
+
+		defer wg.Done()
+
+		resp, err = cc.Sum(ctx, &pb.NumbersRequest{Numbers: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}})
+		if err != nil {
+			log.Printf("failed doing Sum RPC: %v\n", err)
+
+			return
+		}
+
+		fmt.Printf("Sum RPC result: %.2f\n", resp.GetResult())
+	}()
+
+	wg.Wait()
 
 	return nil
 }

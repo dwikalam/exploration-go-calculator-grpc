@@ -72,3 +72,22 @@ func (s *Server) Divide(
 		},
 		nil
 }
+
+func (s *Server) Sum(
+	ctx context.Context,
+	in *pb.NumbersRequest,
+) (
+	*pb.CalculationResponse,
+	error,
+) {
+	var sum float64 = 0
+
+	for _, num := range in.GetNumbers() {
+		sum += num
+	}
+
+	return &pb.CalculationResponse{
+			Result: sum,
+		},
+		nil
+}

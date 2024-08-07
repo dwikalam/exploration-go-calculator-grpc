@@ -9,6 +9,11 @@ service Calculator {
     rpc Substract(CalculationRequest) returns (CalculationResponse);
     rpc Multiply(CalculationRequest) returns (CalculationResponse);
     rpc Divide(CalculationRequest) returns (CalculationResponse);
+    rpc Sum(NumbersRequest) returns (CalculationResponse);
+}
+
+message NumbersRequest {
+    repeated double numbers = 1;
 }
 
 message CalculationRequest {
