@@ -64,35 +64,35 @@ func app(ctx context.Context) error {
 
 	resp, err = cc.Add(ctx, &pb.CalculationRequest{A: 5, B: 10})
 	if err != nil {
-		log.Printf("failed to do Add RPC: %v\n", err)
+		log.Printf("failed doing Add RPC: %v\n", err)
 	} else {
 		fmt.Printf("Add RPC result: %.2f\n", resp.GetResult())
 	}
 
 	resp, err = cc.Substract(ctx, &pb.CalculationRequest{A: 5, B: 10})
 	if err != nil {
-		log.Printf("failed to do Substract RPC: %v\n", err)
+		log.Printf("failed doing Substract RPC: %v\n", err)
 	} else {
 		fmt.Printf("Substract RPC result: %.2f\n", resp.GetResult())
 	}
 
 	resp, err = cc.Multiply(ctx, &pb.CalculationRequest{A: 5, B: 10})
 	if err != nil {
-		log.Printf("failed to do Multiply RPC: %v\n", err)
+		log.Printf("failed doing Multiply RPC: %v\n", err)
 	} else {
 		fmt.Printf("Multiply RPC result: %.2f\n", resp.GetResult())
 	}
 
 	resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 0})
 	if err != nil {
-		log.Printf("failed to do Divide RPC: %v\n", err)
+		log.Printf("failed doing Divide RPC: %v\n", err)
 	} else {
 		fmt.Printf("Divide RPC result: %.2f\n", resp.GetResult())
 	}
 
 	resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 10})
 	if err != nil {
-		log.Printf("failed to do Divide RPC: %v\n", err)
+		log.Printf("failed doing Divide RPC: %v\n", err)
 	} else {
 		fmt.Printf("Divide RPC result: %.2f\n", resp.GetResult())
 	}
