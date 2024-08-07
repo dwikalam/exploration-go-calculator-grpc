@@ -5,14 +5,17 @@ package calculator;
 option go_package = "./pb";
 
 service Calculator {
-    rpc Add(AddRequest) returns (AddResponse);
+    rpc Add(CalculationRequest) returns (CalculationResponse);
+    rpc Substract(CalculationRequest) returns (CalculationResponse);
+    rpc Multiply(CalculationRequest) returns (CalculationResponse);
+    rpc Divide(CalculationRequest) returns (CalculationResponse);
 }
 
-message AddRequest {
-    int64 a = 1;
-    int64 b = 2;
+message CalculationRequest {
+    double a = 1;
+    double b = 2;
 }
 
-message AddResponse {
-    int64 result = 1;
+message CalculationResponse {
+    double result = 1;
 }

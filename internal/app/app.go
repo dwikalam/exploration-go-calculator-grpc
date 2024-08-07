@@ -12,25 +12,9 @@ import (
 
 	"github.com/dwikalam/calcgorpc/internal/app/config"
 	"github.com/dwikalam/calcgorpc/internal/app/pb"
+	"github.com/dwikalam/calcgorpc/internal/app/server"
 	"google.golang.org/grpc"
 )
-
-type server struct {
-	pb.UnimplementedCalculatorServer
-}
-
-func (s *server) Add(
-	ctx context.Context,
-	in *pb.AddRequest,
-) (
-	*pb.AddResponse,
-	error,
-) {
-	return &pb.AddResponse{
-			Result: in.A + in.B,
-		},
-		nil
-}
 
 func Run(ctx context.Context) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
@@ -46,7 +30,8 @@ func Run(ctx context.Context) error {
 		tcpConfig net.ListenConfig
 		listener  net.Listener
 
-		s *grpc.Server
+		srv        *server.Server
+		grpcServer *grpc.Server
 
 		wg sync.WaitGroup
 
@@ -79,12 +64,16 @@ func Run(ctx context.Context) error {
 
 	fmt.Printf("%s listening on %s\n", cfg.GetServerNetwork(), cfg.GetServerAddress())
 
+	// Setup Server
+
+	srv = server.New()
+
 	go func() {
-		s = grpc.NewServer()
+		grpcServer = grpc.NewServer()
 
-		pb.RegisterCalculatorServer(s, &server{})
+		pb.RegisterCalculatorServer(grpcServer, srv)
 
-		if err := s.Serve(listener); err != nil {
+		if err := grpcServer.Serve(listener); err != nil {
 			log.Printf("failed serving on the listener: %v\n", err)
 		}
 	}()

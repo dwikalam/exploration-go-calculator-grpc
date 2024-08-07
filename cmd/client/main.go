@@ -39,6 +39,8 @@ func app(ctx context.Context) error {
 		conn *grpc.ClientConn
 		cc   pb.CalculatorClient
 
+		resp *pb.CalculationResponse
+
 		err error
 	)
 
@@ -60,12 +62,40 @@ func app(ctx context.Context) error {
 
 	cc = pb.NewCalculatorClient(conn)
 
-	resp, err := cc.Add(ctx, &pb.AddRequest{A: 5, B: 10})
+	resp, err = cc.Add(ctx, &pb.CalculationRequest{A: 5, B: 10})
 	if err != nil {
 		log.Printf("failed to do Add RPC: %v\n", err)
+	} else {
+		fmt.Printf("Add RPC result: %.2f\n", resp.GetResult())
 	}
 
-	fmt.Printf("Add RPC result: %d\n", resp.GetResult())
+	resp, err = cc.Substract(ctx, &pb.CalculationRequest{A: 5, B: 10})
+	if err != nil {
+		log.Printf("failed to do Substract RPC: %v\n", err)
+	} else {
+		fmt.Printf("Substract RPC result: %.2f\n", resp.GetResult())
+	}
+
+	resp, err = cc.Multiply(ctx, &pb.CalculationRequest{A: 5, B: 10})
+	if err != nil {
+		log.Printf("failed to do Multiply RPC: %v\n", err)
+	} else {
+		fmt.Printf("Multiply RPC result: %.2f\n", resp.GetResult())
+	}
+
+	resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 0})
+	if err != nil {
+		log.Printf("failed to do Divide RPC: %v\n", err)
+	} else {
+		fmt.Printf("Divide RPC result: %.2f\n", resp.GetResult())
+	}
+
+	resp, err = cc.Divide(ctx, &pb.CalculationRequest{A: 5, B: 10})
+	if err != nil {
+		log.Printf("failed to do Divide RPC: %v\n", err)
+	} else {
+		fmt.Printf("Divide RPC result: %.2f\n", resp.GetResult())
+	}
 
 	return nil
 }
