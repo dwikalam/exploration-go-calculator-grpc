@@ -66,10 +66,9 @@ func Run(ctx context.Context) error {
 
 	// Setup Server
 
-	srv = server.New()
-
 	go func() {
 		grpcServer = grpc.NewServer()
+		srv = server.New()
 
 		pb.RegisterCalculatorServer(grpcServer, srv)
 
