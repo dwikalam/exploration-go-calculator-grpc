@@ -59,6 +59,7 @@ func app(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("creating new grpc client failed: %v", err)
 	}
+	defer conn.Close()
 
 	cc = pb.NewCalculatorClient(conn)
 
